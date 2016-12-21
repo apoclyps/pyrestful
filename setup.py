@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 #
 # Copyright 2013 Rodrigo Ancavil del Pino
 #
@@ -17,17 +17,17 @@
 import distutils.core
 
 try:
-	import setuptools
+    import setuptools
 except ImportError:
-	pass
+    pass
 
-packages=['tornado','pyconvert']
+packages = ['tornado', 'pyconvert']
 
 distutils.core.setup(
-	name='pyrestful',
-	version = '0.4.2',
-	packages=['pyrestful','demos'],
-	author='Innovaser',
-	author_email='rancavil@innovaser.cl',
-	install_requires=packages
+    name='pyrestful',
+    version='0.4.3',
+    packages=['pyrestful'],
+    author='Innovaser',
+    author_email='rancavil@innovaser.cl',
+    install_requires=packages
 )
