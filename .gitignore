@@ -3,3 +3,5 @@ pyrestful.egg-info/
 dist/
 build/
 venv/
+
+.idea/
