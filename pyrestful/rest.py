@@ -25,6 +25,7 @@ import xml.dom.minidom
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
+import tornado.escape
 from pyconvert.pyconv import convertXML2OBJ, convert2XML, convertJSON2OBJ, convert2JSON
 
 from pyrestful import mediatypes, types, encoders
@@ -160,7 +161,7 @@ class RestHandler(tornado.web.RequestHandler):
             consumes = getattr(operation, "_consumes")
             services_from_request = list(filter(lambda x: x in path, service_name))
             query_params = getattr(operation, "_query_params")
-            manual_response = getattr(operation,"_manual_response")
+            manual_response = getattr(operation, "_manual_response")
 
             if operation._method == self.request.method and service_name == services_from_request and len(
                     service_params) + len(service_name) == len(services_and_params):
@@ -188,10 +189,10 @@ class RestHandler(tornado.web.RequestHandler):
                         return
 
                     if produces:
- 						self.set_header("Content-Type",produces)
-                        
+                        self.set_header("Content-Type", produces)
+
                     if manual_response:
-						return
+                        return
 
                     # enabling CORS
                     self.set_header("Access-Control-Allow-Origin", "*")
@@ -214,9 +215,9 @@ class RestHandler(tornado.web.RequestHandler):
                         self.write(response.toxml())
                         self.finish()
                     else:
-                        self.gen_http_error(500, "Internal Server Error : response is not %s document" % produces)
+                        self.gen_json_error(500, "Internal Server Error : response is not %s document" % produces)
                 except Exception as detail:
-                    self.gen_http_error(500, "Internal Server Error : %s" % detail)
+                    self.gen_json_error(500, "Internal Server Error : %s" % detail)
 
     def _find_params_value_of_url(self, services, url):
         """ Find the values of path params """
@@ -263,6 +264,15 @@ class RestHandler(tornado.web.RequestHandler):
         self.clear()
         self.set_status(status)
         self.write("<html><body>" + str(msg) + "</body></html>")
+        self.finish()
+
+    def gen_json_error(self, status, msg):
+        """ Generates the custom HTTP error with a JSON response """
+        self.clear()
+        self.set_status(status)
+        if msg:
+            error_response = {'status_code': status, 'message': msg}
+            self.write(tornado.escape.json_encode(error_response))
         self.finish()
 
     @classmethod

@@ -7,7 +7,7 @@ class CustomEncoder(json.JSONEncoder):
         if isinstance(object, set):
             return list(object)
         if isinstance(object, Decimal):
-            if object & 1 > 0:
+            if object % 1 > 0:
                 return float(object)
             else:
                 return int(object)
