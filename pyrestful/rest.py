@@ -27,7 +27,7 @@ import tornado.web
 import tornado.wsgi
 from pyconvert.pyconv import convertXML2OBJ, convert2XML, convertJSON2OBJ, convert2JSON
 
-from pyrestful import mediatypes, types
+from pyrestful import mediatypes, types, encoders
 
 
 class PyRestfulException(Exception):
@@ -204,10 +204,10 @@ class RestHandler(tornado.web.RequestHandler):
                         response = convert2XML(response)
 
                     if produces == mediatypes.APPLICATION_JSON and isinstance(response, dict):
-                        self.write(response)
+                        self.write(json.dumps(response, cls=encoders.CustomEncoder))
                         self.finish()
                     elif produces == mediatypes.APPLICATION_JSON and isinstance(response, list):
-                        self.write(json.dumps(response))
+                        self.write(json.dumps(response, cls=encoders.CustomEncoder))
                         self.finish()
                     elif produces in [mediatypes.APPLICATION_XML, mediatypes.TEXT_XML] and isinstance(response,
                                                                                                       xml.dom.minidom.Document):
