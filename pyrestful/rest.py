@@ -117,6 +117,15 @@ def delete(*params, **kwparams):
     return method
 
 
+def option(*params, **kwparams):
+    """ Decorator for config a python function like a Rest PUT verb	"""
+
+    def method(f):
+        return config(f, 'OPTION', **kwparams)
+
+    return method
+
+
 class RestHandler(tornado.web.RequestHandler):
     def get(self):
         """ Executes get method """
@@ -133,6 +142,10 @@ class RestHandler(tornado.web.RequestHandler):
     def delete(self):
         """ Executes put method"""
         self._exe('DELETE')
+
+    def option(self):
+        """ Executes put method"""
+        self._exe('OPTION')
 
     def _exe(self, method):
         """ Executes the python function for the Rest Service """
@@ -197,7 +210,7 @@ class RestHandler(tornado.web.RequestHandler):
                     # enabling CORS
                     self.set_header("Access-Control-Allow-Origin", "*")
                     self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-                    self.set_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+                    self.set_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
 
                     if produces == mediatypes.APPLICATION_JSON and hasattr(response, '__module__'):
                         response = convert2JSON(response)
